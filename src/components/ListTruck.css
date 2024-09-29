@@ -1,0 +1,20 @@
+/* Custom padding for the form card */
+.card {
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Add some space around the main table */
+  .table {
+    margin-top: 20px;
+  }
+
+  .modal {
+  background-color: rgba(0, 0, 0, 0.5); /* Dark backdrop */
+}
+
+.modal-dialog {
+  max-width: 500px; /* Adjust the width of the modal */
+}
+
+  

@@ -6,11 +6,9 @@
   
   /* Sidebar styling */
   .sidebar {
-    width: 250px;
-    min-width: 200px;
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center; /* Centers children horizontally */
   }
   
   /* Content area styling */
@@ -24,5 +22,20 @@
   .nav .btn {
     width: 100%;
     text-align: left;
+  }
+
+  /* Style the logo container */
+  .logo-container {
+    display: flex;
+    justify-content: center; /* Centers horizontally */
+    align-items: center;     /* Centers vertically */
+    width: 100%;
+    height: 150px; /* Adjust height as needed */
+  }
+
+/* Adjust the logo size */
+.logo-container img {
+    max-width: 100%;
+    max-height: 100px; /* Adjust the max height as needed */
   }
   

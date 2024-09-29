@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getTrucks, createTruck, updateTruck, deleteTruck } from '../services/api';
+import Modal from './Modal'; // Import the new Modal component
 
 interface Truck {
   id: string;
@@ -12,7 +13,7 @@ const ListTruck: React.FC = () => {
   const [trucks, setTrucks] = useState<Truck[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [showForm, setShowForm] = useState<boolean>(false);
+  const [showModal, setShowModal] = useState<boolean>(false);
   const [newTruck, setNewTruck] = useState<Truck>({ id: '', licensePlate: '', color: '' });
   const [isEditing, setIsEditing] = useState<boolean>(false);
 
@@ -40,13 +41,13 @@ const ListTruck: React.FC = () => {
     fetchTrucks();
     setNewTruck({ id: '', licensePlate: '', color: '' });
     setIsEditing(false);
-    setShowForm(false);
+    setShowModal(false);
   };
 
   const handleEditClick = (truck: Truck) => {
     setNewTruck(truck);
     setIsEditing(true);
-    setShowForm(true);
+    setShowModal(true);
   };
 
   const handleDeleteClick = async (id: string) => {
@@ -59,49 +60,56 @@ const ListTruck: React.FC = () => {
 
   return (
     <div className="mt-4">
-      <h3 className="mb-3">List of Trucks</h3>
-      <button
-        className="btn btn-success mb-3"
-        onClick={() => {
-          setNewTruck({ id: '', licensePlate: '', color: '' });
-          setIsEditing(false);
-          setShowForm(true);
-        }}
-      >
-        Add Truck
-      </button>
+      <div className="d-flex justify-content-between align-items-center mb-3">
+        <h3>List of Trucks</h3>
+        <button
+          className="btn btn-success"
+          onClick={() => {
+            setNewTruck({ id: '', licensePlate: '', color: '' });
+            setIsEditing(false);
+            setShowModal(true);
+          }}
+        >
+          Add Truck
+        </button>
+      </div>
 
-      {showForm && (
-        <div className="mb-3">
-          <h4>{isEditing ? 'Edit Truck' : 'Add Truck'}</h4>
+      {/* Use the Modal component */}
+      <Modal
+        title={isEditing ? 'Edit Truck' : 'Add Truck'}
+        show={showModal}
+        onClose={() => setShowModal(false)}
+        onSave={handleAddOrEditTruck}
+      >
+        <div className="form-group mb-2">
+          <label htmlFor="licensePlate">License Plate</label>
           <input
             type="text"
-            className="form-control mb-2"
+            id="licensePlate"
+            className="form-control"
             placeholder="License Plate"
             value={newTruck.licensePlate}
             onChange={(e) => setNewTruck({ ...newTruck, licensePlate: e.target.value })}
           />
+        </div>
+        <div className="form-group mb-2">
+          <label htmlFor="color">Color</label>
           <input
             type="text"
-            className="form-control mb-2"
+            id="color"
+            className="form-control"
             placeholder="Color"
             value={newTruck.color}
             onChange={(e) => setNewTruck({ ...newTruck, color: e.target.value })}
           />
-          <button className="btn btn-primary" onClick={handleAddOrEditTruck}>
-            {isEditing ? 'Update Truck' : 'Add Truck'}
-          </button>
-          <button className="btn btn-secondary ms-2" onClick={() => setShowForm(false)}>
-            Cancel
-          </button>
         </div>
-      )}
+      </Modal>
 
       {trucks.length === 0 ? (
         <p>No trucks available</p>
       ) : (
-        <table className="table table-striped table-bordered">
-          <thead className="thead-dark">
+        <table className="table table-striped table-hover table-bordered">
+          <thead className="table-dark">
             <tr>
               <th>License Plate</th>
               <th>Color</th>

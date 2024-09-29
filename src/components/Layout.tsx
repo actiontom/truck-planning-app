@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import ListTruck from './ListTruck';
-import './Layout.css'; // Import the custom CSS for additional styling
+import ListDriver from './ListDriver';
+import logo from '../assets/logo.png'; // Import the logo image
+import './Layout.css';
 
 const Layout: React.FC = () => {
   const [activeComponent, setActiveComponent] = useState<string | null>(null);
@@ -9,6 +11,8 @@ const Layout: React.FC = () => {
     switch (activeComponent) {
       case 'listTrucks':
         return <ListTruck />;
+      case 'listDrivers':
+        return <ListDriver />;
       default:
         return <p>Welcome! Please select an option from the menu.</p>;
     }
@@ -16,31 +20,36 @@ const Layout: React.FC = () => {
 
   return (
     <div className="layout">
-      {/* Sidebar */}
       <aside className="sidebar bg-primary text-white">
-        <h2 className="p-3">App Logo</h2>
+        {/* Logo Section */}
+        <div className="logo-container p-3">
+          <img src={logo} alt="App Logo" className="img-fluid" />
+        </div>
         <nav className="nav flex-column p-3">
-        <button
-            className="btn btn-primary mb-2 text-start"
-            onClick={() => setActiveComponent(null)}
-          >
-            Home
-          </button>
           <button
             className="btn btn-primary mb-2 text-start"
             onClick={() => setActiveComponent('listTrucks')}
           >
             Trucks
           </button>
-          {/* Placeholder for more buttons */}
-          
+          <button
+            className="btn btn-primary mb-2 text-start"
+            onClick={() => setActiveComponent('listDrivers')}
+          >
+            Drivers
+          </button>
+          <button
+            className="btn btn-primary mb-2 text-start"
+            onClick={() => setActiveComponent(null)}
+          >
+            Home
+          </button>
         </nav>
       </aside>
 
-      {/* Main Content Area */}
       <main className="content p-3">
         <header className="header mb-4">
-          <h1>Truck Planning Application</h1>
+          <h1>TransPorter</h1>
         </header>
         {renderContent()}
       </main>
