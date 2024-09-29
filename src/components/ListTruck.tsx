@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getTrucks, createTruck, updateTruck, deleteTruck } from '../services/api';
-import Modal from './Modal'; // Import the new Modal component
+import Modal from './Modal'; // Reuse the Modal component
 
 interface Truck {
   id: string;
@@ -17,6 +17,10 @@ const ListTruck: React.FC = () => {
   const [newTruck, setNewTruck] = useState<Truck>({ id: '', licensePlate: '', color: '' });
   const [isEditing, setIsEditing] = useState<boolean>(false);
 
+  // Validation states
+  const [licensePlateError, setLicensePlateError] = useState<string | null>(null);
+  const [colorError, setColorError] = useState<string | null>(null);
+
   useEffect(() => {
     fetchTrucks();
   }, []);
@@ -32,7 +36,33 @@ const ListTruck: React.FC = () => {
     }
   };
 
+  const validateForm = (): boolean => {
+    let isValid = true;
+
+    // License Plate validation
+    if (newTruck.licensePlate.trim() === '') {
+      setLicensePlateError('License plate is required.');
+      isValid = false;
+    } else {
+      setLicensePlateError(null);
+    }
+
+    // Color validation
+    if (newTruck.color.trim() === '') {
+      setColorError('Color is required.');
+      isValid = false;
+    } else {
+      setColorError(null);
+    }
+
+    return isValid;
+  };
+
   const handleAddOrEditTruck = async () => {
+    if (!validateForm()) {
+      return; // Prevent submission if the form is invalid
+    }
+
     if (isEditing) {
       await updateTruck(newTruck.id, newTruck);
     } else {
@@ -74,7 +104,7 @@ const ListTruck: React.FC = () => {
         </button>
       </div>
 
-      {/* Use the Modal component */}
+      {/* Use the Modal component for Add/Edit */}
       <Modal
         title={isEditing ? 'Edit Truck' : 'Add Truck'}
         show={showModal}
@@ -86,22 +116,24 @@ const ListTruck: React.FC = () => {
           <input
             type="text"
             id="licensePlate"
-            className="form-control"
+            className={`form-control ${licensePlateError ? 'is-invalid' : ''}`}
             placeholder="License Plate"
             value={newTruck.licensePlate}
             onChange={(e) => setNewTruck({ ...newTruck, licensePlate: e.target.value })}
           />
+          {licensePlateError && <div className="invalid-feedback">{licensePlateError}</div>}
         </div>
         <div className="form-group mb-2">
           <label htmlFor="color">Color</label>
           <input
             type="text"
             id="color"
-            className="form-control"
+            className={`form-control ${colorError ? 'is-invalid' : ''}`}
             placeholder="Color"
             value={newTruck.color}
             onChange={(e) => setNewTruck({ ...newTruck, color: e.target.value })}
           />
+          {colorError && <div className="invalid-feedback">{colorError}</div>}
         </div>
       </Modal>
 

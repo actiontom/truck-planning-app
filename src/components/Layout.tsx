@@ -21,11 +21,17 @@ const Layout: React.FC = () => {
   return (
     <div className="layout">
       <aside className="sidebar bg-primary text-white">
-        {/* Logo Section */}
+        
         <div className="logo-container p-3">
           <img src={logo} alt="App Logo" className="img-fluid" />
         </div>
         <nav className="nav flex-column p-3">
+        <button
+            className="btn btn-primary mb-2 text-start"
+            onClick={() => setActiveComponent(null)}
+          >
+            Home
+          </button>
           <button
             className="btn btn-primary mb-2 text-start"
             onClick={() => setActiveComponent('listTrucks')}
@@ -38,18 +44,13 @@ const Layout: React.FC = () => {
           >
             Drivers
           </button>
-          <button
-            className="btn btn-primary mb-2 text-start"
-            onClick={() => setActiveComponent(null)}
-          >
-            Home
-          </button>
+         
         </nav>
       </aside>
 
       <main className="content p-3">
         <header className="header mb-4">
-          <h1>TransPorter</h1>
+          <h1>TransPorter Application</h1>
         </header>
         {renderContent()}
       </main>

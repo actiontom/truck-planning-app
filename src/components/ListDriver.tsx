@@ -16,6 +16,10 @@ const ListDriver: React.FC = () => {
   const [newDriver, setNewDriver] = useState<Driver>({ id: '', name: '', licenseNumber: '' });
   const [isEditing, setIsEditing] = useState<boolean>(false);
 
+  // Validation states
+  const [nameError, setNameError] = useState<string | null>(null);
+  const [licenseNumberError, setLicenseNumberError] = useState<string | null>(null);
+
   useEffect(() => {
     fetchDrivers();
   }, []);
@@ -31,7 +35,33 @@ const ListDriver: React.FC = () => {
     }
   };
 
+  const validateForm = (): boolean => {
+    let isValid = true;
+
+    // Name validation
+    if (newDriver.name.trim() === '') {
+      setNameError('Name is required.');
+      isValid = false;
+    } else {
+      setNameError(null);
+    }
+
+    // License Number validation
+    if (newDriver.licenseNumber.trim() === '') {
+      setLicenseNumberError('License number is required.');
+      isValid = false;
+    } else {
+      setLicenseNumberError(null);
+    }
+
+    return isValid;
+  };
+
   const handleAddOrEditDriver = async () => {
+    if (!validateForm()) {
+      return; // Prevent submission if the form is invalid
+    }
+
     if (isEditing) {
       await updateDriver(newDriver.id, newDriver);
     } else {
@@ -85,22 +115,24 @@ const ListDriver: React.FC = () => {
           <input
             type="text"
             id="name"
-            className="form-control"
+            className={`form-control ${nameError ? 'is-invalid' : ''}`}
             placeholder="Driver Name"
             value={newDriver.name}
             onChange={(e) => setNewDriver({ ...newDriver, name: e.target.value })}
           />
+          {nameError && <div className="invalid-feedback">{nameError}</div>}
         </div>
         <div className="form-group mb-2">
           <label htmlFor="licenseNumber">License Number</label>
           <input
             type="text"
             id="licenseNumber"
-            className="form-control"
+            className={`form-control ${licenseNumberError ? 'is-invalid' : ''}`}
             placeholder="License Number"
             value={newDriver.licenseNumber}
             onChange={(e) => setNewDriver({ ...newDriver, licenseNumber: e.target.value })}
           />
+          {licenseNumberError && <div className="invalid-feedback">{licenseNumberError}</div>}
         </div>
       </Modal>
 
