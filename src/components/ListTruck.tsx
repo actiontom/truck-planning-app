@@ -36,6 +36,22 @@ const truckStatuses = [
     'En Route to Pickup',
   ];
 
+  const truckTypes = [
+    'Flatbed',
+    'Refrigerated (Reefer)',
+    'Box Truck',
+    'Tanker',
+    'Dump Truck',
+    'Container Truck',
+    'Car Carrier',
+    'Tow Truck',
+    'Garbage Truck',
+    'Logging Truck',
+    'Cement Mixer',
+    'Livestock Truck',
+    'Curtainsider',
+  ];
+
 const ListTruck: React.FC = () => {
   const [trucks, setTrucks] = useState<Truck[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -271,15 +287,20 @@ const ListTruck: React.FC = () => {
         </div>
 
         <div className="form-group mb-2">
-          <label htmlFor="truckType">Truck Type</label>
-          <input
-            type="text"
+        <label htmlFor="truckType">Truck Type</label>
+        <select
             id="truckType"
             className="form-control"
-            placeholder="Truck Type"
             value={newTruck.truckType || ''}
             onChange={(e) => setNewTruck({ ...newTruck, truckType: e.target.value })}
-          />
+        >
+            <option value="">Select Truck Type</option>
+            {truckTypes.map((type) => (
+            <option key={type} value={type}>
+                {type}
+            </option>
+            ))}
+        </select>
         </div>
 
         <div className="form-group mb-2">
