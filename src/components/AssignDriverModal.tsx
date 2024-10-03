@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { getDrivers, assignDriverToTruck } from '../services/api'; // Import your API service
+import { getDrivers, assignDriverToTruck } from '../services/api';
+import './AssignDriverModal.css'; // Import the custom CSS for modal styling
 
 interface AssignDriverModalProps {
     truckId: string;
@@ -49,7 +50,7 @@ const AssignDriverModal: React.FC<AssignDriverModalProps> = ({ truckId, show, on
     if (!show) return null;
 
     return (
-        <div className="modal">
+        <div className="modal-overlay">
             <div className="modal-content">
                 <h4>Assign Driver</h4>
                 <div className="form-group">
@@ -68,12 +69,14 @@ const AssignDriverModal: React.FC<AssignDriverModalProps> = ({ truckId, show, on
                         ))}
                     </select>
                 </div>
-                <button className="btn btn-primary mt-3" onClick={handleAssign}>
-                    Assign
-                </button>
-                <button className="btn btn-secondary mt-3" onClick={onClose}>
-                    Cancel
-                </button>
+                <div className="modal-buttons">
+                    <button className="btn btn-primary mt-3" onClick={handleAssign}>
+                        Assign
+                    </button>
+                    <button className="btn btn-secondary mt-3" onClick={onClose}>
+                        Cancel
+                    </button>
+                </div>
             </div>
         </div>
     );
