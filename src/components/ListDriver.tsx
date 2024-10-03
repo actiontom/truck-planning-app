@@ -14,8 +14,10 @@ export const ListDriver: React.FC = () => {
         licenseNumber: '',
         phoneNumber: '',
         dateOfBirth: '',
-        assignedTruckId: ''
+        assignedTruckId: '',
+        status: 'Available' // Set default status to 'Available'
     });
+    
     const [isEditing, setIsEditing] = useState<boolean>(false);
 
     // Validation states
@@ -72,7 +74,8 @@ export const ListDriver: React.FC = () => {
                 licenseNumber: newDriver.licenseNumber || '', // Ensure licenseNumber is not undefined
                 phoneNumber: newDriver.phoneNumber || '', // Provide a default value
                 dateOfBirth: newDriver.dateOfBirth || '', // Provide a default value
-                assignedTruckId: newDriver.assignedTruckId || '' // Provide a default value
+                assignedTruckId: newDriver.assignedTruckId || '', // Provide a default value
+                status: newDriver.status || 'Available' // Provide a default value
             };
     
             if (isEditing && driverData.id) {
@@ -88,7 +91,8 @@ export const ListDriver: React.FC = () => {
                 licenseNumber: '',
                 phoneNumber: '',
                 dateOfBirth: '',
-                assignedTruckId: ''
+                assignedTruckId: '',
+                status: 'Available'
             });
             setIsEditing(false);
             setShowModal(false);

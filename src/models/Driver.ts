@@ -5,4 +5,5 @@ export interface Driver {
     phoneNumber?: string;
     dateOfBirth?: string;
     assignedTruckId?: string;
+    status?: string;
 }

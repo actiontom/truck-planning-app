@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { getTrucks, createTruck, updateTruck, deleteTruck } from '../services/api';
-import Modal from './Modal'; // Reuse the Modal component
+import { getTrucks, createTruck, updateTruck, deleteTruck, assignDriverToTruck } from '../services/api';
+import Modal from './Modal';
+import AssignDriverModal from './AssignDriverModal';
 
 interface Truck {
   id: string;
@@ -26,31 +27,31 @@ interface Truck {
 }
 
 const truckStatuses = [
-    'Available',
-    'In Transit',
-    'Loading',
-    'Unloading',
-    'Maintenance',
-    'Out of Service',
-    'Scheduled',
-    'En Route to Pickup',
-  ];
+  'Available',
+  'In Transit',
+  'Loading',
+  'Unloading',
+  'Maintenance',
+  'Out of Service',
+  'Scheduled',
+  'En Route to Pickup',
+];
 
-  const truckTypes = [
-    'Flatbed',
-    'Refrigerated (Reefer)',
-    'Box Truck',
-    'Tanker',
-    'Dump Truck',
-    'Container Truck',
-    'Car Carrier',
-    'Tow Truck',
-    'Garbage Truck',
-    'Logging Truck',
-    'Cement Mixer',
-    'Livestock Truck',
-    'Curtainsider',
-  ];
+const truckTypes = [
+  'Flatbed',
+  'Refrigerated (Reefer)',
+  'Box Truck',
+  'Tanker',
+  'Dump Truck',
+  'Container Truck',
+  'Car Carrier',
+  'Tow Truck',
+  'Garbage Truck',
+  'Logging Truck',
+  'Cement Mixer',
+  'Livestock Truck',
+  'Curtainsider',
+];
 
 const ListTruck: React.FC = () => {
   const [trucks, setTrucks] = useState<Truck[]>([]);
@@ -72,6 +73,22 @@ const ListTruck: React.FC = () => {
     location: '',
   });
   const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [showAssignModal, setShowAssignModal] = useState<boolean>(false);
+  const [selectedTruckId, setSelectedTruckId] = useState<string>('');
+
+  const handleAssignDriverClick = (truck: Truck) => {
+    setSelectedTruckId(truck.id);
+    setShowAssignModal(true);
+  };
+
+  const handleAssignDriverClose = () => {
+    setShowAssignModal(false);
+    setSelectedTruckId('');
+  };
+
+  const handleDriverAssigned = () => {
+    fetchTrucks(); // Re-fetch trucks to update the list
+  };
 
   // Validation states
   const [licensePlateError, setLicensePlateError] = useState<string | null>(null);
@@ -98,7 +115,7 @@ const ListTruck: React.FC = () => {
 
   const validateForm = (): boolean => {
     let isValid = true;
-  
+
     // License Plate validation
     if (newTruck.licensePlate.trim() === '') {
       setLicensePlateError('License plate is required.');
@@ -106,7 +123,7 @@ const ListTruck: React.FC = () => {
     } else {
       setLicensePlateError(null);
     }
-  
+
     // Color validation
     if (newTruck.color.trim() === '') {
       setColorError('Color is required.');
@@ -114,7 +131,7 @@ const ListTruck: React.FC = () => {
     } else {
       setColorError(null);
     }
-  
+
     // maxLoadCapacity validation
     if (newTruck.maxLoadCapacity <= 0) {
       setMaxLoadCapacityError('Max Load Capacity must be greater than 0.');
@@ -122,7 +139,7 @@ const ListTruck: React.FC = () => {
     } else {
       setMaxLoadCapacityError(null);
     }
-  
+
     // Status validation
     if (newTruck.status.trim() === '') {
       setStatusError('Status is required.');
@@ -130,7 +147,7 @@ const ListTruck: React.FC = () => {
     } else {
       setStatusError(null);
     }
-  
+
     // Location validation
     if (newTruck.location.trim() === '') {
       setLocationError('Location is required.');
@@ -138,10 +155,9 @@ const ListTruck: React.FC = () => {
     } else {
       setLocationError(null);
     }
-  
+
     return isValid;
   };
-  
 
   const handleAddOrEditTruck = async () => {
     if (!validateForm()) {
@@ -254,7 +270,6 @@ const ListTruck: React.FC = () => {
             type="text"
             id="driverId"
             className={`form-control ${driverIdError ? 'is-invalid' : ''}`}
-            // placeholder="Driver Id"
             value={newTruck.driverId}
             onChange={(e) => setNewTruck({ ...newTruck, driverId: e.target.value })}
           />
@@ -287,20 +302,20 @@ const ListTruck: React.FC = () => {
         </div>
 
         <div className="form-group mb-2">
-        <label htmlFor="truckType">Truck Type</label>
-        <select
+          <label htmlFor="truckType">Truck Type</label>
+          <select
             id="truckType"
             className="form-control"
             value={newTruck.truckType || ''}
             onChange={(e) => setNewTruck({ ...newTruck, truckType: e.target.value })}
-        >
+          >
             <option value="">Select Truck Type</option>
             {truckTypes.map((type) => (
-            <option key={type} value={type}>
+              <option key={type} value={type}>
                 {type}
-            </option>
+              </option>
             ))}
-        </select>
+          </select>
         </div>
 
         <div className="form-group mb-2">
@@ -319,7 +334,7 @@ const ListTruck: React.FC = () => {
             ))}
           </select>
           {statusError && <div className="invalid-feedback">{statusError}</div>}
-        </div>  
+        </div>
 
         <div className="form-group mb-2">
           <label htmlFor="location">Location</label>
@@ -333,8 +348,15 @@ const ListTruck: React.FC = () => {
           />
           {locationError && <div className="invalid-feedback">{locationError}</div>}
         </div>
-      
       </Modal>
+
+      {/* Assign Driver Modal */}
+      <AssignDriverModal
+        truckId={selectedTruckId}
+        show={showAssignModal}
+        onClose={handleAssignDriverClose}
+        onDriverAssigned={handleDriverAssigned}
+      />
 
       {trucks.length === 0 ? (
         <p>No trucks available</p>
@@ -366,6 +388,9 @@ const ListTruck: React.FC = () => {
                   </button>
                   <button className="btn btn-danger btn-sm" onClick={() => handleDeleteClick(truck.id)}>
                     Delete
+                  </button>
+                  <button className="btn btn-primary btn-sm me-2" onClick={() => handleAssignDriverClick(truck)}>
+                    Assign Driver
                   </button>
                 </td>
               </tr>
